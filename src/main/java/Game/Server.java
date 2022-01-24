@@ -24,6 +24,7 @@ public class Server {
             //starting game with the clients
             GameEngine ge = new GameEngine(c1, c2);
             ge.run();
+            System.out.println("Game started");
         }
     }
 }
