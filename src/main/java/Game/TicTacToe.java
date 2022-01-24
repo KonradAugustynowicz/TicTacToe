@@ -55,25 +55,34 @@ public class TicTacToe {
             throw new PlayerWonException("4,5,6");
     }
 
-    public String arrayToString() {
+    public String arrayToString(){
         String msg = "";
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++){
             String mark = array[i - 1] == 0 ? " " : array[i - 1] == -1 ? "O" : "X";
-            msg += String.format("%2s",mark);   // to print fixed no. of characters (s = spaces if no char present)
-//            System.out.printf("%2s", mark);
-            if (i % 3 == 0) {
-                msg += "\n---------\n";
-//                System.out.println("\n---------");
-            }
-            else {
-                msg += "|";
-//                System.out.print("|");
-            }
+            msg+= "" + i + mark;
         }
-        msg += "\n";
-//        System.out.println();
-
         return msg;
     }
+
+//    public String arrayToString() {
+//        String msg = "";
+//        for (int i = 1; i < 10; i++) {
+//            String mark = array[i - 1] == 0 ? " " : array[i - 1] == -1 ? "O" : "X";
+//            msg += String.format("%2s",mark);   // to print fixed no. of characters (s = spaces if no char present)
+////            System.out.printf("%2s", mark);
+//            if (i % 3 == 0) {
+//                msg += "\n---------\n";
+////                System.out.println("\n---------");
+//            }
+//            else {
+//                msg += "|";
+////                System.out.print("|");
+//            }
+//        }
+//        msg += "\n";
+////        System.out.println();
+//
+//        return msg;
+//    }
 
 }

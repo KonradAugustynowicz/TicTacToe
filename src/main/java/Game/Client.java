@@ -1,7 +1,9 @@
 package Game;
 
+import Podjebane.Gameboard;
 import org.w3c.dom.ls.LSOutput;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,12 +31,11 @@ public class Client {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+
         write("Type your name: ");
         name = read();
         System.out.println(name);
     }
-
-
 
     public String read(){
         String msg = "";
