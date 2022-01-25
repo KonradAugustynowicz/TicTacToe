@@ -1,4 +1,6 @@
-package game;
+package server;
+
+import Podjebane.FieldType;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,19 +14,16 @@ public class Server {
             //listening for client 1
             System.out.println("waiting client 1...........");
             socket = serverSocket.accept();
-            Client c1 = new Client(socket);
+            Client c1 = new Client(socket, FieldType.CIRCLE);
             System.out.println("client 1 joined..........");
 
             //listening for client2
             System.out.println("waiting client 2...........");
             socket = serverSocket.accept();
-            Client c2 = new Client(socket);
+            Client c2 = new Client(socket,FieldType.CROSS);
             System.out.println("client 2 joined..........");
-
-            //starting game with the clients
-            GameEngine ge = new GameEngine(c1, c2);
-            ge.run();
-            System.out.println("Game started");
+            Game game = new Game(c1,c2);
+            game.run();
         }
     }
 }

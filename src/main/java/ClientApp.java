@@ -1,3 +1,4 @@
+import Podjebane.FieldType;
 import Podjebane.Gameboard;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
@@ -16,63 +17,28 @@ public class ClientApp {
         OutputStream output = socket.getOutputStream();
         InputStream input = socket.getInputStream();
 
-        new Gameboard(new JFrame());
 
-        Thread read = new Thread(() -> {
-            while (true) {
-                try {
-                    if (input.available() > 0) {
-                        int d = 0;
-                        String msg = "";
-                        //bomba
-                        int i=0;
-                        boolean numberCheck =true;
-                        //koniec bomby
-                        while ((d = input.read()) != 38) {
-                            //bomba
-                            if (((char) d == 'O' || (char) d == 'X')){
-                                //Gameboard.kafelki.getAt(i/3,i%3).setValue(true);
-                            }else if (numberCheck){
-                                numberCheck=false;
-                            }else{
-                                numberCheck=true;
-                                i++;
-                            }
-                            //koniec bomby
-                            msg = msg + (char) d;
-                        }
-                        //bomba
-                        if (msg.equals("Please enter from 1-9: "))
-                            Gameboard.yourTourn=true;
-                        //koniec bomby
-                        System.out.println(msg);
+
+        while (true) {
+            if (input.available() > 0) {
+                int d;
+                String msg = "";
+                while ((d = input.read()) != 38) {
+                    msg = msg + (char) d;
+                }
+                String[] split = msg.split(";");
+                if(split[0].equals("INIT")) {
+                    if (split[1].equals("CIRCLE")) {
+                        new Gameboard(new JFrame(), FieldType.CIRCLE, socket).run();
                     }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                    else {
+                        new Gameboard(new JFrame(), FieldType.CROSS, socket).run();
+                    }
+                    break;
                 }
             }
-        });
-        read.start();
+        }
 
-        Thread write = new Thread(() -> {
-            Scanner sc = new Scanner(System.in);
-            while (true) {
-                String msg = sc.nextLine();
-                try {
-                    System.out.println(Gameboard.clicked);
-                    //bomba
-                    if (Gameboard.clicked != 0){
-                        output.write((Gameboard.clicked + "&").getBytes());
-                    }else{
-                        output.write((msg + "&").getBytes()); //to powinno nie być zakomentowane
-                    }
-                    //koniec bomby
-                    output.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        write.start();
+
     }
 }

@@ -1,31 +1,38 @@
 package Podjebane;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 import javax.swing.JFrame;
 
 
-public class Gameboard {
+public class Gameboard implements Runnable {
     static final int TILESIZE = 40;
-    public static int clicked = 0;
-    public static boolean yourTourn = false;
-    final public static Fields kafelki = new Fields(3, 3, TILESIZE);
+    final public Fields kafelki = new Fields(3, 3, TILESIZE);
+    FieldType type;
+    Socket socket;
+    JFrame frame;
+    OutputStream output;
+    InputStream input;
+    boolean yourTurn = false;
 
-    JFrame frame = new JFrame("Iterator");
+    public Gameboard(JFrame frame, FieldType type, Socket socket) throws IOException {
 
-    public Gameboard(JFrame frame) {
 
-        this.frame = frame;
+        this.type = type;
+        this.socket = socket;
+        output = socket.getOutputStream();
+        input = socket.getInputStream();
         System.setProperty("sun.java2d.opengl", "true");
+        System.out.println(type);
 
         // konstruowanie okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        this.frame = frame;
         frame.getContentPane().add(kafelki);
         frame.setSize(900, 600);
         frame.setLocationRelativeTo(null);
@@ -36,17 +43,18 @@ public class Gameboard {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                //                if (yourTourn){
-                int x = e.getX() / TILESIZE;
-                int y = e.getY() / TILESIZE;
-                clicked = 1 + x + (y * 3);
-                yourTourn = ! yourTourn;
-                if (yourTourn)
-                    kafelki.setAt(y, x, FieldType.CROSS);
-                else
-                    kafelki.setAt(y, x, FieldType.CIRCLE);
-                // }
-
+                if (yourTurn) {
+                    int x = e.getX() / TILESIZE;
+                    int y = e.getY() / TILESIZE;
+                    if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
+                        try {
+                            output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
+                            output.flush();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
             }
         });
         // reakcja na ruch - podświetlenie wskazanego kafelka
@@ -58,5 +66,34 @@ public class Gameboard {
                 kafelki.highlight(x, y);
             }
         });
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                if (input.available() > 0) {
+                    int d;
+                    String msg = "";
+                    while ((d = input.read()) != 38) {
+                        msg = msg + (char) d;
+                    }
+                    String[] split = msg.split(";");
+                    if (split[0].equals("UPDATE")) {
+                        int x = Integer.parseInt(split[1]);
+                        int y = Integer.parseInt(split[2]);
+                        FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
+                        kafelki.setAt(y, x, incomingType);
+                    }
+                    if (split[0].equals("move"))
+                        yourTurn = true;
+                    if (split[0].equals("wait"))
+                        yourTurn = false;
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

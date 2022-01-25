@@ -1,4 +1,6 @@
-package game;
+package server;
+
+import Podjebane.FieldType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,30 +8,22 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class Client {
-
     Socket socket;
-    InputStream input;
+    FieldType type;
     OutputStream output;
-    String name;
+    InputStream input;
 
-    Client(Socket socket) throws IOException {
+    public Client(Socket socket, FieldType type) {
         this.socket = socket;
-        input = socket.getInputStream();
-        output = socket.getOutputStream();
-        initialSetup();
-    }
+        try {
+            input=socket.getInputStream();
+            output=socket.getOutputStream();
 
-    private void initialSetup() {
-        //client name.........
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-        write("Type your name: ");
-        name = read();
-        System.out.println(name);
+            write("INIT;"+type);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.type = type;
     }
 
     public String read(){
@@ -42,7 +36,9 @@ public class Client {
                     while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
                     }
-                    exit = true;
+                    String[] split = msg.split(";");
+                    if(split[split.length-1].equals(type.toString()))
+                        exit = true;
                 }
             } catch (IOException e) {
                 System.out.println("Error reading msg..........");
@@ -50,6 +46,7 @@ public class Client {
         }
         return msg;
     }
+
 
     public void write(String msg){
         try {
