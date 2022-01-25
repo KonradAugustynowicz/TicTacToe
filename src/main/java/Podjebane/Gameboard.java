@@ -1,6 +1,8 @@
 package Podjebane;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import javax.swing.*;
 public class Gameboard implements Runnable {
     static final int TILESIZE = 80;
     final public Fields kafelki = new Fields(3, 3, TILESIZE);
+    final public StartMenu startMenu = new StartMenu();
     FieldType type;
     Socket socket;
     JFrame frame;
@@ -33,42 +36,70 @@ public class Gameboard implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame = frame;
         this.frame.setLayout(new GridBagLayout());
+        frame.setSize(300, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        frame.getContentPane().add(kafelki, gbc);
-        frame.setSize(300, 300);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frame.getContentPane().add(startMenu);
 
-        // reakcja na kliknięcie uruchomienie wątku z iteracją
-        kafelki.addMouseListener(new MouseAdapter() {
-
+        startMenu.getStartButton().addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                if (yourTurn) {
-                    int x = e.getX() / TILESIZE;
-                    int y = e.getY() / TILESIZE;
-                    if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
-                        if (kafelki.isBlank(y, x))
-                            try {
-                                output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
-                                output.flush();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
+            public void actionPerformed(ActionEvent e) {
+                frame.getContentPane().removeAll();
+
+                JLabel nazwaGraczaLabel = new JLabel("Miejsce na coś(np czy pauza)");
+                nazwaGraczaLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.insets = new Insets(0, 0, 10, 0);
+                frame.getContentPane().add(nazwaGraczaLabel, gbc);
+
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                gbc.insets = new Insets(0, 0, 0, 0);
+                frame.getContentPane().add(kafelki, gbc);
+
+                JButton pauseButton = new JButton("Pause");
+                gbc.gridx = 0;
+                gbc.gridy = 2;
+                gbc.insets = new Insets(10, 0, 0, 0);
+                frame.getContentPane().add(pauseButton, gbc);
+
+                frame.getContentPane().repaint();
+                frame.revalidate();
+
+                // reakcja na kliknięcie uruchomienie wątku z iteracją
+                kafelki.addMouseListener(new MouseAdapter() {
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (yourTurn) {
+                            int x = e.getX() / TILESIZE;
+                            int y = e.getY() / TILESIZE;
+                            if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
+                                if (kafelki.isBlank(y, x))
+                                    try {
+                                        output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
+                                        output.flush();
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
                             }
+                        }
                     }
-                }
-            }
-        });
-        // reakcja na ruch - podświetlenie wskazanego kafelka
-        kafelki.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int x = e.getX() / TILESIZE;
-                int y = e.getY() / TILESIZE;
-                kafelki.highlight(x, y);
+                });
+                // reakcja na ruch - podświetlenie wskazanego kafelka
+                kafelki.addMouseMotionListener(new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        int x = e.getX() / TILESIZE;
+                        int y = e.getY() / TILESIZE;
+                        kafelki.highlight(x, y);
+                    }
+                });
             }
         });
     }
@@ -100,7 +131,6 @@ public class Gameboard implements Runnable {
                         showExitDialog("You won!");
                     if (msg.equals("LOSE"))
                         showExitDialog("You lost!");
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
