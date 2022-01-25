@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 
 public class Gameboard implements Runnable {
@@ -82,6 +82,8 @@ public class Gameboard implements Runnable {
                     while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
                     }
+                    if (msg.equals("DRAW"))
+                        JOptionPane.showMessageDialog(frame, "Remis");
                     String[] split = msg.split(";");
                     if (split[0].equals("UPDATE")) {
                         int x = Integer.parseInt(split[1]);

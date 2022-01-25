@@ -17,4 +17,6 @@ public enum FieldType {
     public Color getColor() {
         return this.color;
     }
+
+
 }
