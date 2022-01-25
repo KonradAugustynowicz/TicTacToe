@@ -57,7 +57,7 @@ public class Game implements Runnable {
 
     private boolean checkForEnd() {
         //check rows
-        for (int row = 0; row < 3; row++) {
+        for (int row = 0; row <=6; row+=3) {
             if (fields[row] == fields[row + 1] && fields[row] == fields[row + 2]) {
                 if (fields[row] != FieldType.BLANK) {
                     if (fields[row] == FieldType.CIRCLE) {
