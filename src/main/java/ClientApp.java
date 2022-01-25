@@ -31,7 +31,7 @@ public class ClientApp {
                         while ((d = input.read()) != 38) {
                             //bomba
                             if (((char) d == 'O' || (char) d == 'X')){
-                                Gameboard.kafelki.getAt(i/3,i%3).setValue(true);
+                                //Gameboard.kafelki.getAt(i/3,i%3).setValue(true);
                             }else if (numberCheck){
                                 numberCheck=false;
                             }else{

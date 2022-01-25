@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 public class Gameboard {
     static final int TILESIZE = 40;
     public static int clicked = 0;
-    public static boolean yourTourn=false;
+    public static boolean yourTourn = false;
     final public static Fields kafelki = new Fields(3, 3, TILESIZE);
 
     JFrame frame = new JFrame("Iterator");
@@ -27,9 +27,8 @@ public class Gameboard {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.getContentPane().add(kafelki);
-        frame.setSize(900,600);
+        frame.setSize(900, 600);
         frame.setLocationRelativeTo(null);
-        frame.pack();
         frame.setVisible(true);
 
         // reakcja na kliknięcie uruchomienie wątku z iteracją
@@ -37,13 +36,16 @@ public class Gameboard {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (yourTourn){
-                    int x = e.getX() / TILESIZE;
-                    int y = e.getY() / TILESIZE;
-                    clicked = 1+x + (y*3);
-                    kafelki.getAt(y,x).flip();
-                    yourTourn=false;
-                }
+                //                if (yourTourn){
+                int x = e.getX() / TILESIZE;
+                int y = e.getY() / TILESIZE;
+                clicked = 1 + x + (y * 3);
+                yourTourn = ! yourTourn;
+                if (yourTourn)
+                    kafelki.setAt(y, x, FieldType.CROSS);
+                else
+                    kafelki.setAt(y, x, FieldType.CIRCLE);
+                // }
 
             }
         });

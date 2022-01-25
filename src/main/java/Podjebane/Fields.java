@@ -1,10 +1,13 @@
 package Podjebane;
 
+import field.IField;
+import field.Field;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Fields extends JPanel {
-    private Field[][] matrix;
+    private IField[][] matrix;
     private int tilesize;
     // kafelek podświetlony (myszką)
     private int hx = -1, hy = -1;
@@ -13,10 +16,10 @@ public class Fields extends JPanel {
     public Fields(int cols, int rows, int tilesize) {
         this.setPreferredSize(new Dimension(cols * tilesize, rows * tilesize));
         this.tilesize = tilesize;
-        matrix = new Field[rows][cols];
+        matrix = new IField[rows][cols];
         for (int i = 0; i < matrix.length; ++i) {
             for (int j = 0; j < matrix[i].length; ++j) {
-                matrix[i][j] = new Field();
+                matrix[i][j] = Field.getField(FieldType.BLANK);
             }
         }
         this.setBackground(Color.BLACK);
@@ -26,16 +29,18 @@ public class Fields extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (int i = 0; i < matrix.length; ++i) {
-            for (int j = 0; j < matrix[i].length; ++j) {
-                if (i == hy && j == hx) {
-                    g.setColor(matrix[i][j].getColor().brighter());
+        for (int y = 0; y < matrix.length; ++y) {
+            for (int x = 0; x < matrix[y].length; ++x) {
+                if (y == hy && x == hx) {
+                    g.setColor(Color.YELLOW);
                 } else {
-                    g.setColor(matrix[i][j].getColor());
+                    g.setColor(Color.WHITE);
                 }
-                g.fillRect(j * tilesize, i * tilesize + 1, tilesize - 1, tilesize - 1);
+                matrix[y][x].draw(g,x,y,tilesize);
+               // System.out.println(matrix[y][x]);
             }
         }
+        //System.out.println();
     }
 
     // podświetl
@@ -54,7 +59,10 @@ public class Fields extends JPanel {
         return matrix[0].length;
     }
 
-    public Field getAt(int row, int col) {
+    public IField getAt(int row, int col) {
         return matrix[row][col];
+    }
+    public void setAt(int row,int col,FieldType type){
+        matrix[row][col] = Field.getField(type);
     }
 }

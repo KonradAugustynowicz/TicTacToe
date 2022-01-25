@@ -26,7 +26,6 @@ class Watek implements Runnable {
             }
             for (; j < p.getCols(); ++j) {
                 // a w środku - obracamy, odświeżamy i czekamy
-                p.getAt(i, j).flip();
                 p.repaint();
                 try {
                     Thread.sleep(100);

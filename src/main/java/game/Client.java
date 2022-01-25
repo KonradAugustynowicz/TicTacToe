@@ -1,9 +1,5 @@
-package Game;
+package game;
 
-import Podjebane.Gameboard;
-import org.w3c.dom.ls.LSOutput;
-
-import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,20 +8,19 @@ import java.net.Socket;
 public class Client {
 
     Socket socket;
-    InputStream is;
-    OutputStream os;
+    InputStream input;
+    OutputStream output;
     String name;
 
     Client(Socket socket) throws IOException {
         this.socket = socket;
-        is = socket.getInputStream();
-        os = socket.getOutputStream();
+        input = socket.getInputStream();
+        output = socket.getOutputStream();
         initialSetup();
     }
 
     private void initialSetup() {
         //client name.........
-        System.out.println("something");
 //        try {
 //            Thread.sleep(500);
 //        } catch (InterruptedException e) {
@@ -42,9 +37,9 @@ public class Client {
         boolean exit = false;
         while (!exit){
             try {
-                if (is.available() > 0) {
+                if (input.available() > 0) {
                     int d;
-                    while ((d = is.read()) != 38) {
+                    while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
                     }
                     exit = true;
@@ -58,8 +53,8 @@ public class Client {
 
     public void write(String msg){
         try {
-            os.write((msg+"&").getBytes());
-            os.flush();
+            output.write((msg+"&").getBytes());
+            output.flush();
         } catch (IOException e) {
             System.out.println("Error sending msg...........");
         }
@@ -68,8 +63,8 @@ public class Client {
     public void close() {
         try {
             socket.close();
-            os.close();
-            is.close();
+            output.close();
+            input.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
