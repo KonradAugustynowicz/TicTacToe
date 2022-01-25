@@ -1,5 +1,6 @@
 package Podjebane;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import javax.swing.JFrame;
 
 
 public class Gameboard implements Runnable {
-    static final int TILESIZE = 40;
+    static final int TILESIZE = 80;
     final public Fields kafelki = new Fields(3, 3, TILESIZE);
     FieldType type;
     Socket socket;
@@ -21,8 +22,6 @@ public class Gameboard implements Runnable {
     boolean yourTurn = false;
 
     public Gameboard(JFrame frame, FieldType type, Socket socket) throws IOException {
-
-
         this.type = type;
         this.socket = socket;
         output = socket.getOutputStream();
@@ -33,8 +32,13 @@ public class Gameboard implements Runnable {
         // konstruowanie okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame = frame;
-        frame.getContentPane().add(kafelki);
-        frame.setSize(900, 600);
+        this.frame.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc=new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        frame.getContentPane().add(kafelki,gbc);
+        frame.setSize(300, 300);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
