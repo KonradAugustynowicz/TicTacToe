@@ -19,7 +19,7 @@ public class Gameboard implements Runnable {
     JFrame frame;
     OutputStream output;
     InputStream input;
-    boolean yourTurn = false;
+    static boolean yourTurn = false;
 
     public Gameboard(JFrame frame, FieldType type, Socket socket) throws IOException {
         this.type = type;
@@ -34,10 +34,10 @@ public class Gameboard implements Runnable {
         this.frame = frame;
         this.frame.setLayout(new GridBagLayout());
 
-        GridBagConstraints gbc=new GridBagConstraints();
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        frame.getContentPane().add(kafelki,gbc);
+        frame.getContentPane().add(kafelki, gbc);
         frame.setSize(300, 300);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -51,12 +51,13 @@ public class Gameboard implements Runnable {
                     int x = e.getX() / TILESIZE;
                     int y = e.getY() / TILESIZE;
                     if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
-                        try {
-                            output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
-                            output.flush();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
+                        if (kafelki.isBlank(x, y))
+                            try {
+                                output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
+                                output.flush();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
                     }
                 }
             }
@@ -82,8 +83,6 @@ public class Gameboard implements Runnable {
                     while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
                     }
-                    if (msg.equals("DRAW"))
-                        JOptionPane.showMessageDialog(frame, "Remis");
                     String[] split = msg.split(";");
                     if (split[0].equals("UPDATE")) {
                         int x = Integer.parseInt(split[1]);
@@ -95,11 +94,25 @@ public class Gameboard implements Runnable {
                         yourTurn = true;
                     if (split[0].equals("wait"))
                         yourTurn = false;
+                    if (msg.equals("DRAW"))
+                        showExitDialog("Draw");
+                    if (msg.equals("WIN"))
+                        showExitDialog("You won!");
+                    if (msg.equals("LOSE"))
+                        showExitDialog("You lost!");
 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showExitDialog(String message) {
+        int result = JOptionPane.showConfirmDialog(frame,
+                message, "Game over",
+                JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION)
+            frame.dispose();
     }
 }
