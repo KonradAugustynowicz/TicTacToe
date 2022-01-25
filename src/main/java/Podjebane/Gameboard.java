@@ -51,7 +51,7 @@ public class Gameboard implements Runnable {
                     int x = e.getX() / TILESIZE;
                     int y = e.getY() / TILESIZE;
                     if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
-                        if (kafelki.isBlank(x, y))
+                        if (kafelki.isBlank(y, x))
                             try {
                                 output.write(("UPDATE;" + x + ';' + y + ";" + type + "&").getBytes());
                                 output.flush();

@@ -31,11 +31,10 @@ public class Fields extends JPanel {
         super.paintComponent(g);
         for (int y = 0; y < matrix.length; ++ y) {
             for (int x = 0; x < matrix[y].length; ++ x) {
+                g.setColor(Color.WHITE);
                 if (y == hy && x == hx) {
-                    g.setColor(Color.WHITE.darker());
-                }
-                else {
-                    g.setColor(Color.WHITE);
+                    if (Gameboard.yourTurn && isBlank(y,x))
+                        g.setColor(Color.WHITE.darker());
                 }
                 matrix[y][x].draw(g, x, y, tilesize);
                 // System.out.println(matrix[y][x]);

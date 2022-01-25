@@ -2,6 +2,7 @@ package server;
 
 import Podjebane.FieldType;
 import states.GameState;
+import states.PausedState;
 import states.RunningState;
 
 import java.util.Arrays;
@@ -40,6 +41,8 @@ public class Game implements Runnable {
                 firstPlayerTurn = true;
             }
             String[] split = msg.split(";");
+            if (msg.equals("PAUSE"))
+                state = PausedState.getState();
             if (split[0].equals("UPDATE")) {
                 int x = Integer.parseInt(split[1]);
                 int y = Integer.parseInt(split[2]);
@@ -57,7 +60,7 @@ public class Game implements Runnable {
 
     private boolean checkForEnd() {
         //check rows
-        for (int row = 0; row <=6; row+=3) {
+        for (int row = 0; row <= 6; row += 3) {
             if (fields[row] == fields[row + 1] && fields[row] == fields[row + 2]) {
                 if (fields[row] != FieldType.BLANK) {
                     if (fields[row] == FieldType.CIRCLE) {
