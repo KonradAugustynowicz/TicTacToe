@@ -1,4 +1,4 @@
-package Podjebane;
+package client;
 
 import java.awt.*;
 

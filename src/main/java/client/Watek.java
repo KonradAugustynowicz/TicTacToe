@@ -1,4 +1,4 @@
-package Podjebane;
+package client;
 
 // ten wątek nie wykorzystuje iteratora
 class Watek implements Runnable {

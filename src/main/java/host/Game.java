@@ -1,6 +1,6 @@
 package host;
 
-import Podjebane.FieldType;
+import client.FieldType;
 import states.GameState;
 import states.PausedState;
 import states.RunningState;

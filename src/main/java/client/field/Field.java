@@ -1,6 +1,6 @@
 package client.field;
 
-import Podjebane.FieldType;
+import client.FieldType;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

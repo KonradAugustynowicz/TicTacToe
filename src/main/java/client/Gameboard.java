@@ -1,4 +1,4 @@
-package Podjebane;
+package client;
 
 import client.field.LoseResultField;
 import client.field.WinResultField;
@@ -26,6 +26,12 @@ public class Gameboard implements Runnable {
     OutputStream output;
     InputStream input;
     static boolean yourTurn = false;
+
+    //Buttons
+    JButton leftButton = new JButton("<");
+    JButton rightButton = new JButton(">");
+    JLabel historyLabel = new JLabel("Historia");
+
 
     public Gameboard(JFrame frame, FieldType type, Socket socket) throws IOException {
         this.type = type;
@@ -55,21 +61,38 @@ public class Gameboard implements Runnable {
 
                 JLabel nazwaGraczaLabel = new JLabel("Miejsce na coś(np czy pauza)");
                 nazwaGraczaLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-                gbc.gridx = 0;
+                gbc.gridx = 1;
                 gbc.gridy = 0;
                 gbc.insets = new Insets(0, 0, 10, 0);
                 frame.getContentPane().add(nazwaGraczaLabel, gbc);
 
-                gbc.gridx = 0;
+                gbc.gridx = 1;
                 gbc.gridy = 1;
                 gbc.insets = new Insets(0, 0, 0, 0);
                 frame.getContentPane().add(kafelki, gbc);
 
                 JButton pauseButton = new JButton("Pause");
-                gbc.gridx = 0;
+                gbc.gridx = 1;
                 gbc.gridy = 2;
                 gbc.insets = new Insets(10, 0, 0, 0);
                 frame.getContentPane().add(pauseButton, gbc);
+                historyLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+                historyLabel.setVisible(false);
+                gbc.gridx = 1;
+                gbc.gridy = 3;
+                gbc.insets = new Insets(10, 0, 0, 0);
+                frame.getContentPane().add(historyLabel, gbc);
+                leftButton.setVisible(false);
+                gbc.gridx = 0;
+                gbc.gridy = 3;
+                gbc.insets = new Insets(10, 0, 0, -120);
+                frame.getContentPane().add(leftButton, gbc);
+
+                rightButton.setVisible(false);
+                gbc.gridx = 2;
+                gbc.gridy = 3;
+                gbc.insets = new Insets(10, -120, 0, 0);
+                frame.getContentPane().add(rightButton, gbc);
 
                 frame.getContentPane().repaint();
                 frame.revalidate();
@@ -110,15 +133,18 @@ public class Gameboard implements Runnable {
     @Override
     public void run() {
         while (true) {
+            String msg = "";
+
             try {
-                if (input.available() > 0) {
+                if (input.available() > 0 || !msg.isEmpty()) {
                     int d;
-                    String msg = "";
                     while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
                     }
+
                     String[] split = msg.split(";");
                     if (split[0].equals("UPDATE")) {
+
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
@@ -129,19 +155,28 @@ public class Gameboard implements Runnable {
                     if (split[0].equals("wait"))
                         yourTurn = false;
                     if (msg.equals("DRAW"))
-                        showExitDialog("Draw");
+                        leftButton.setVisible(true);
+                    rightButton.setVisible(true);
+                    historyLabel.setVisible(true);
+                    showExitDialog("Draw");
                     if (split[0].equals("WIN")) {
-                        for(int i=1;i<split.length;i+=2){
+                        leftButton.setVisible(true);
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
+                        for (int i = 1; i < split.length; i += 2) {
                             int x = Integer.parseInt(split[i]);
-                            int y = Integer.parseInt(split[i+1]);
-                            kafelki.setAt(y,x,new WinResultField(kafelki.getAt(y,x)));
+                            int y = Integer.parseInt(split[i + 1]);
+                            kafelki.setAt(y, x, new WinResultField(kafelki.getAt(y, x)));
                         }
                     }
                     if (split[0].equals("LOSE")) {
-                        for(int i=1;i<split.length;i+=2){
+                        leftButton.setVisible(true);
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
+                        for (int i = 1; i < split.length; i += 2) {
                             int x = Integer.parseInt(split[i]);
-                            int y = Integer.parseInt(split[i+1]);
-                            kafelki.setAt(y,x,new LoseResultField(kafelki.getAt(y,x)));
+                            int y = Integer.parseInt(split[i + 1]);
+                            kafelki.setAt(y, x, new LoseResultField(kafelki.getAt(y, x)));
                         }
                     }
 

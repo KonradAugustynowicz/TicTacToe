@@ -1,4 +1,4 @@
-package Podjebane;
+package client;
 
 import client.field.IField;
 import client.field.Field;
