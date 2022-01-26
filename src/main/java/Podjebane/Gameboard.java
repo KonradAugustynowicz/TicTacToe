@@ -1,8 +1,5 @@
 package Podjebane;
 
-import client.field.LoseResultField;
-import client.field.WinResultField;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +14,7 @@ import javax.swing.*;
 public class Gameboard implements Runnable {
     static final int TILESIZE = 80;
     final public Fields kafelki = new Fields(3, 3, TILESIZE);
+    final public StartMenu startMenu = new StartMenu();
     FieldType type;
     Socket socket;
     JFrame frame;
@@ -31,18 +29,45 @@ public class Gameboard implements Runnable {
         input = socket.getInputStream();
         System.setProperty("sun.java2d.opengl", "true");
         System.out.println(type);
+
         // konstruowanie okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame = frame;
         this.frame.setLayout(new GridBagLayout());
+        frame.setSize(300, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        frame.getContentPane().add(kafelki, gbc);
-        frame.setSize(300, 300);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frame.getContentPane().add(startMenu);
+
+        startMenu.getStartButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.getContentPane().removeAll();
+
+                JLabel nazwaGraczaLabel = new JLabel("Miejsce na coś(np czy pauza)");
+                nazwaGraczaLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.insets = new Insets(0, 0, 10, 0);
+                frame.getContentPane().add(nazwaGraczaLabel, gbc);
+
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                gbc.insets = new Insets(0, 0, 0, 0);
+                frame.getContentPane().add(kafelki, gbc);
+
+                JButton pauseButton = new JButton("Pause");
+                gbc.gridx = 0;
+                gbc.gridy = 2;
+                gbc.insets = new Insets(10, 0, 0, 0);
+                frame.getContentPane().add(pauseButton, gbc);
+
+                frame.getContentPane().repaint();
+                frame.revalidate();
 
         // reakcja na kliknięcie uruchomienie wątku z iteracją
         kafelki.addMouseListener(new MouseAdapter() {
@@ -90,7 +115,7 @@ public class Gameboard implements Runnable {
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
-                        kafelki.setTypeAt(y, x, incomingType);
+                        kafelki.setAt(y, x, incomingType);
                     }
                     if (split[0].equals("move"))
                         yourTurn = true;
