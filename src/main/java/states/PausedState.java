@@ -1,5 +1,8 @@
 package states;
 
+import host.Client;
+import host.Game;
+
 public class PausedState implements GameState{
     private static final GameState instance = new PausedState();
 
@@ -8,7 +11,17 @@ public class PausedState implements GameState{
     }
 
     @Override
-    public void play() {
-
+    public String play(Client client1, Client client2, Game game) {
+        String msg;
+        if (game.firstPlayerTurn) {
+            msg = client1.read();
+        }
+        else {
+            msg = client2.read();
+        }
+        if(msg.equals("PAUSE")){
+            game.setState(RunningState.getState());
+        }
+        return "";
     }
 }

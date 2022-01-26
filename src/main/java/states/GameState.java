@@ -1,5 +1,8 @@
 package states;
 
+import host.Client;
+import host.Game;
+
 public interface GameState {
-    void play();
+    String play(Client client1, Client client2, Game game);
 }

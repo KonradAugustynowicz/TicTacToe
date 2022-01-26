@@ -1,6 +1,7 @@
 package host;
 
 import client.FieldType;
+import states.FinishedState;
 import states.GameState;
 import states.PausedState;
 import states.RunningState;
@@ -11,8 +12,16 @@ public class Game implements Runnable {
 
     private final Client client1;
     private final Client client2;
+
+
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
     private GameState state;
     private FieldType[] fields;
+    public boolean firstPlayerTurn = true;
 
     public Game(Client client1, Client client2) {
         this.client1 = client1;
@@ -24,27 +33,13 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        boolean firstPlayerTurn = true;
         boolean gameOver = false;
         while (! gameOver) {
-
-            state.play();
-
             String msg;
-            if (firstPlayerTurn) {
-                client1.write("move");
-                client2.write("wait");
-                msg = client1.read();
-                firstPlayerTurn = false;
-            }
-            else {
-                client1.write("wait");
-                client2.write("move");
-                msg = client2.read();
-                firstPlayerTurn = true;
-            }
+            msg = state.play(client1, client2,this);
+
             String[] split = msg.split(";");
-            if (msg.equals("PAUSE"))
+            if (msg.equals("PAUSE") && !(state instanceof PausedState))
                 state = PausedState.getState();
             if (split[0].equals("UPDATE")) {
                 int x = Integer.parseInt(split[1]);
@@ -56,6 +51,7 @@ public class Game implements Runnable {
             client2.write(msg);
             gameOver = checkForEnd();
         }
+        state = FinishedState.getState();
         client1.close();
         client2.close();
     }
@@ -65,14 +61,14 @@ public class Game implements Runnable {
         for (int row = 0; row <= 6; row += 3) {
             if (fields[row] == fields[row + 1] && fields[row] == fields[row + 2]) {
                 if (fields[row] != FieldType.BLANK) {
-                    int y=row/3;
+                    int y = row / 3;
                     if (fields[row] == FieldType.CIRCLE) {
-                        client1.write("WIN;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
-                        client2.write("LOSE;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
+                        client1.write("WIN;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
+                        client2.write("LOSE;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
                     }
                     else {
-                        client1.write("LOSE;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
-                        client2.write("WIN;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
+                        client1.write("LOSE;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
+                        client2.write("WIN;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
                     }
                     return true;
                 }
@@ -84,12 +80,12 @@ public class Game implements Runnable {
                 if (fields[column] != FieldType.BLANK) {
                     int x = column;
                     if (fields[column] == FieldType.CIRCLE) {
-                        client1.write("WIN;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
-                        client2.write("LOSE;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
+                        client1.write("WIN;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
+                        client2.write("LOSE;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
                     }
                     else {
-                        client1.write("LOSE;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
-                        client2.write("WIN;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
+                        client1.write("LOSE;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
+                        client2.write("WIN;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
                     }
                     return true;
                 }
@@ -100,12 +96,12 @@ public class Game implements Runnable {
         if (fields[0] == fields[4] && fields[0] == fields[8]) {
             if (fields[0] != FieldType.BLANK) {
                 if (fields[0] == FieldType.CIRCLE) {
-                    client1.write("WIN;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
-                    client2.write("LOSE;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
+                    client1.write("WIN;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
+                    client2.write("LOSE;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
                 }
                 else {
-                    client1.write("LOSE;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
-                    client2.write("WIN;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
+                    client1.write("LOSE;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
+                    client2.write("WIN;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
                 }
                 return true;
             }
@@ -113,12 +109,12 @@ public class Game implements Runnable {
         if (fields[6] == fields[4] && fields[6] == fields[2]) {
             if (fields[6] != FieldType.BLANK) {
                 if (fields[6] == FieldType.CIRCLE) {
-                    client1.write("WIN;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
-                    client2.write("LOSE;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
+                    client1.write("WIN;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
+                    client2.write("LOSE;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
                 }
                 else {
-                    client1.write("LOSE;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
-                    client2.write("WIN;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
+                    client1.write("LOSE;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
+                    client2.write("WIN;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
                 }
                 return true;
             }

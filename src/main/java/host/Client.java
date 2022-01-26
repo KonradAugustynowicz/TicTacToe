@@ -38,6 +38,8 @@ public class Client {
                     String[] split = msg.split(";");
                     if(split[split.length-1].equals(type.toString()))
                         exit = true;
+                    if(msg.equals("PAUSE"))
+                        exit = true;
                 }
             } catch (IOException e) {
                 System.out.println("Error reading msg..........");
