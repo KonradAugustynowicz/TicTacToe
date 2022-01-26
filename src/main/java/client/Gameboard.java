@@ -85,13 +85,13 @@ public class Gameboard implements Runnable {
                 leftButton.setVisible(false);
                 gbc.gridx = 0;
                 gbc.gridy = 3;
-                gbc.insets = new Insets(10, 0, 0, -120);
+                gbc.insets = new Insets(10, 0, 0, - 120);
                 frame.getContentPane().add(leftButton, gbc);
 
                 rightButton.setVisible(false);
                 gbc.gridx = 2;
                 gbc.gridy = 3;
-                gbc.insets = new Insets(10, -120, 0, 0);
+                gbc.insets = new Insets(10, - 120, 0, 0);
                 frame.getContentPane().add(rightButton, gbc);
 
                 frame.getContentPane().repaint();
@@ -136,7 +136,7 @@ public class Gameboard implements Runnable {
             String msg = "";
 
             try {
-                if (input.available() > 0 || !msg.isEmpty()) {
+                if (input.available() > 0 || ! msg.isEmpty()) {
                     int d;
                     while ((d = input.read()) != 38) {
                         msg = msg + (char) d;
@@ -154,11 +154,12 @@ public class Gameboard implements Runnable {
                         yourTurn = true;
                     if (split[0].equals("wait"))
                         yourTurn = false;
-                    if (msg.equals("DRAW"))
+                    if (msg.equals("DRAW")) {
                         leftButton.setVisible(true);
-                    rightButton.setVisible(true);
-                    historyLabel.setVisible(true);
-                    showExitDialog("Draw");
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
+                        showExitDialog("Draw");
+                    }
                     if (split[0].equals("WIN")) {
                         leftButton.setVisible(true);
                         rightButton.setVisible(true);
@@ -191,7 +192,7 @@ public class Gameboard implements Runnable {
         int result = JOptionPane.showConfirmDialog(frame,
                 message, "Game over",
                 JOptionPane.YES_NO_OPTION);
-        if (result == JOptionPane.YES_OPTION)
+        if (result == JOptionPane.NO_OPTION)
             frame.dispose();
     }
 }

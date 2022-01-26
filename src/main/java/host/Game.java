@@ -27,6 +27,7 @@ public class Game implements Runnable {
         boolean firstPlayerTurn = true;
         boolean gameOver = false;
         while (! gameOver) {
+
             String msg;
             if (firstPlayerTurn) {
                 client1.write("move");

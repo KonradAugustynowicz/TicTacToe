@@ -73,4 +73,13 @@ public class Fields extends JPanel {
     public boolean isBlank(int row, int col) {
         return matrix[row][col].getType() == FieldType.BLANK;
     }
+
+    public void reset(){
+        matrix = new IField[3][3];
+        for (int i = 0; i < matrix.length; ++ i) {
+            for (int j = 0; j < matrix[i].length; ++ j) {
+                matrix[i][j] = Field.getField(FieldType.BLANK);
+            }
+        }
+    }
 }
