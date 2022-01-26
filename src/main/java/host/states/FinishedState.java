@@ -1,4 +1,4 @@
-package states;
+package host.states;
 
 import host.Client;
 import host.Game;

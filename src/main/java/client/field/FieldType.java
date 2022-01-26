@@ -1,4 +1,4 @@
-package client;
+package client.field;
 
 import java.awt.*;
 

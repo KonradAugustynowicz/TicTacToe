@@ -1,9 +1,10 @@
 package client;
 
+import client.field.FieldType;
 import client.field.LoseResultField;
 import client.field.WinResultField;
-import memento.History;
-import memento.Originator;
+import client.memento.History;
+import client.memento.Originator;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -256,7 +257,7 @@ public class Gameboard implements Runnable {
 
     private void showExitDialog(String message) {
         int result = JOptionPane.showConfirmDialog(frame,
-                message + "\nDo you want to return to history?", "Game Over",
+                message + "\nDo you want to see replay?", "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.NO_OPTION)
             frame.dispose();

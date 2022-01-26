@@ -1,7 +1,5 @@
 package client.field;
 
-import client.FieldType;
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.HashMap;

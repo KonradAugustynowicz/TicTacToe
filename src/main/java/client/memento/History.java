@@ -1,4 +1,4 @@
-package memento;
+package client.memento;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package states;
+package host.states;
 
 import host.Client;
 import host.Game;
@@ -6,6 +6,9 @@ import host.Game;
 public class RunningState implements GameState {
 
     private static final GameState instance = new RunningState();
+
+    private RunningState() {
+    }
 
     public static GameState getState() {
         return instance;

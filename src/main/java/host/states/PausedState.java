@@ -1,10 +1,13 @@
-package states;
+package host.states;
 
 import host.Client;
 import host.Game;
 
 public class PausedState implements GameState{
     private static final GameState instance = new PausedState();
+
+    private PausedState() {
+    }
 
     public static GameState getState(){
         return instance;

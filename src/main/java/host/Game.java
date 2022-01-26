@@ -1,10 +1,10 @@
 package host;
 
-import client.FieldType;
-import states.FinishedState;
-import states.GameState;
-import states.PausedState;
-import states.RunningState;
+import client.field.FieldType;
+import host.states.FinishedState;
+import host.states.GameState;
+import host.states.PausedState;
+import host.states.RunningState;
 
 import java.util.Arrays;
 
@@ -36,6 +36,7 @@ public class Game implements Runnable {
         boolean gameOver = false;
         while (! gameOver) {
             String msg;
+
             msg = state.play(client1, client2,this);
 
             String[] split = msg.split(";");

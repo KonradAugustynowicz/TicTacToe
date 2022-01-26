@@ -1,7 +1,5 @@
 package client.field;
 
-import client.FieldType;
-
 import java.awt.*;
 
 public interface IField {

@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class StartMenu extends JPanel {
-    JLabel label=new JLabel("Circle and Cross");
+    JLabel label=new JLabel("Tic Tac Toe");
     JButton startButton=new JButton("Start");
-    JButton historyButton=new JButton("Historia");
+    JButton historyButton=new JButton("History");
     JButton exitButton = new JButton("Exit");
     GridBagConstraints gbc=new GridBagConstraints();
 

@@ -1,4 +1,4 @@
-package memento;
+package client.memento;
 
 public class Originator {
     private String state;

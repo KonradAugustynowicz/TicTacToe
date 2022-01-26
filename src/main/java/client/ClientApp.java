@@ -1,5 +1,6 @@
 package client;
 
+import client.field.FieldType;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import javax.swing.*;

@@ -1,5 +1,6 @@
 package client;
 
+import client.field.FieldType;
 import client.field.IField;
 import client.field.Field;
 
@@ -9,10 +10,8 @@ import java.awt.*;
 public class Fields extends JPanel {
     private IField[][] matrix;
     private int tilesize;
-    // kafelek podświetlony (myszką)
     private int hx = - 1, hy = - 1;
 
-    // inicjalizacja macierzy
     public Fields(int cols, int rows, int tilesize) {
         this.setPreferredSize(new Dimension(cols * tilesize, rows * tilesize));
         this.tilesize = tilesize;
@@ -25,7 +24,6 @@ public class Fields extends JPanel {
         this.setBackground(Color.BLACK);
     }
 
-    // rysowanie macierzy (oraz jednego podświetlonego)
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -43,20 +41,10 @@ public class Fields extends JPanel {
         //System.out.println();
     }
 
-    // podświetl
     public void highlight(int x, int y) {
         hx = x;
         hy = y;
         repaint();
-    }
-
-    // trzy poniższe metody znikną w finalnej wersji
-    public int getRows() {
-        return matrix.length;
-    }
-
-    public int getCols() {
-        return matrix[0].length;
     }
 
     public IField getAt(int row, int col) {
