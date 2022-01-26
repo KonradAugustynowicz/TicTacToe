@@ -1,6 +1,11 @@
 package Podjebane;
 
+import client.field.LoseResultField;
+import client.field.WinResultField;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -68,6 +73,8 @@ public class Gameboard implements Runnable {
 
                 frame.getContentPane().repaint();
                 frame.revalidate();
+            }
+        });
 
         // reakcja na kliknięcie uruchomienie wątku z iteracją
         kafelki.addMouseListener(new MouseAdapter() {
@@ -115,7 +122,7 @@ public class Gameboard implements Runnable {
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
-                        kafelki.setAt(y, x, incomingType);
+                        kafelki.setTypeAt(y, x, incomingType);
                     }
                     if (split[0].equals("move"))
                         yourTurn = true;
