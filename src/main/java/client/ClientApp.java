@@ -12,7 +12,6 @@ import java.net.Socket;
 public class ClientApp {
     public static void main(String[] args) throws IOException {
         FlatDarculaLaf.setup();
-        //server ip: 25.8.248.107
         Socket socket = new Socket("25.8.248.107", 5000);
 
         OutputStream output = socket.getOutputStream();

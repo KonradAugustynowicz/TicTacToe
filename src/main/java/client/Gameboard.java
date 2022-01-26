@@ -39,6 +39,7 @@ public class Gameboard implements Runnable {
     int mementoIndex = 0;
 
     //Buttons
+    JButton leftButton = new JButton("<");
     JButton rightButton = new JButton(">");
     JLabel historyLabel = new JLabel("Historia");
     JLabel mainLabel = new JLabel();
@@ -94,7 +95,6 @@ public class Gameboard implements Runnable {
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
-
                     }
                 });
                 gbc.gridx = 1;
@@ -107,7 +107,11 @@ public class Gameboard implements Runnable {
                 gbc.gridy = 3;
                 gbc.insets = new Insets(10, 0, 0, 0);
                 frame.getContentPane().add(historyLabel, gbc);
-
+                leftButton.setVisible(false);
+                gbc.gridx = 0;
+                gbc.gridy = 3;
+                gbc.insets = new Insets(10, 0, 0, - 120);
+                frame.getContentPane().add(leftButton, gbc);
                 rightButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -181,8 +185,7 @@ public class Gameboard implements Runnable {
                         }
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
-                        FieldType incomingType = split[3].equals("CIRCLE") ?
-                                FieldType.CIRCLE : FieldType.CROSS;
+                        FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
                         fields.setTypeAt(y, x, incomingType);
                     }
                     if (msg.equals("PAUSE")) {
@@ -200,13 +203,25 @@ public class Gameboard implements Runnable {
                         paused=false;
                     }
                     if (msg.equals("DRAW")) {
-                        setMementoState();
+                        if (! isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
+                        leftButton.setVisible(true);
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
                         if (! isHistory) {
                             showExitDialog("Draw");
                         }
                     }
                     if (split[0].equals("WIN")) {
-                        setMementoState();
+                        if (! isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
+                        leftButton.setVisible(true);
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
                         for (int i = 1; i < split.length; i += 2) {
                             int x = Integer.parseInt(split[i]);
                             int y = Integer.parseInt(split[i + 1]);
@@ -217,7 +232,13 @@ public class Gameboard implements Runnable {
                         }
                     }
                     if (split[0].equals("LOSE")) {
-                        setMementoState();
+                        if (! isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
+                        leftButton.setVisible(true);
+                        rightButton.setVisible(true);
+                        historyLabel.setVisible(true);
                         for (int i = 1; i < split.length; i += 2) {
                             int x = Integer.parseInt(split[i]);
                             int y = Integer.parseInt(split[i + 1]);
@@ -243,21 +264,8 @@ public class Gameboard implements Runnable {
         else {
             msg = "";
             isHistory = true;
-            enableHistoryButtons();
             originator.getStateFromMemento(history.getMemento(0));
             fields.reset();
-        }
-    }
-
-    private void enableHistoryButtons() {
-        rightButton.setVisible(true);
-        historyLabel.setVisible(true);
-    }
-
-    private void setMementoState() {
-        if (!isHistory) {
-            originator.setState(msg);
-            history.addMemento(originator.saveStateToMemento());
         }
     }
 }
