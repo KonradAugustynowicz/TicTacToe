@@ -1,4 +1,4 @@
-package field;
+package client.field;
 
 import Podjebane.FieldType;
 

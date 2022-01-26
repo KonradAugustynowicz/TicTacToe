@@ -1,7 +1,7 @@
 package Podjebane;
 
-import field.IField;
-import field.Field;
+import client.field.IField;
+import client.field.Field;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,8 +63,11 @@ public class Fields extends JPanel {
         return matrix[row][col];
     }
 
-    public void setAt(int row, int col, FieldType type) {
+    public void setTypeAt(int row, int col, FieldType type) {
         matrix[row][col] = Field.getField(type);
+    }
+    public void setAt(int row,int col,IField field){
+        matrix[row][col] = field;
     }
 
     public boolean isBlank(int row, int col) {

@@ -1,3 +1,5 @@
+package client;
+
 import Podjebane.FieldType;
 import Podjebane.Gameboard;
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -12,12 +14,11 @@ import java.util.Scanner;
 public class ClientApp {
     public static void main(String[] args) throws IOException {
         FlatDarculaLaf.setup();
-        Socket socket = new Socket("localhost", 2000);
+        String ip = "91.239.154.61";
+        Socket socket = new Socket("25.8.248.107", 5000);
 
         OutputStream output = socket.getOutputStream();
         InputStream input = socket.getInputStream();
-
-
 
         while (true) {
             if (input.available() > 0) {

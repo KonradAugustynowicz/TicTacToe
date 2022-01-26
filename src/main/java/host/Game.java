@@ -1,4 +1,4 @@
-package server;
+package host;
 
 import Podjebane.FieldType;
 import states.GameState;
@@ -48,7 +48,6 @@ public class Game implements Runnable {
                 int y = Integer.parseInt(split[2]);
                 FieldType type = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
                 fields[x + 3 * y] = type;
-
             }
             client1.write(msg);
             client2.write(msg);
@@ -63,13 +62,14 @@ public class Game implements Runnable {
         for (int row = 0; row <= 6; row += 3) {
             if (fields[row] == fields[row + 1] && fields[row] == fields[row + 2]) {
                 if (fields[row] != FieldType.BLANK) {
+                    int y=row/3;
                     if (fields[row] == FieldType.CIRCLE) {
-                        client1.write("WIN");
-                        client2.write("LOSE");
+                        client1.write("WIN;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
+                        client2.write("LOSE;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
                     }
                     else {
-                        client1.write("LOSE");
-                        client2.write("WIN");
+                        client1.write("LOSE;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
+                        client2.write("WIN;"+0+";"+y+";"+1+";"+y+";"+2+";"+y);
                     }
                     return true;
                 }
@@ -79,13 +79,14 @@ public class Game implements Runnable {
         for (int column = 0; column < 3; column++) {
             if (fields[column] == fields[column + 3] && fields[column] == fields[column + 6]) {
                 if (fields[column] != FieldType.BLANK) {
+                    int x = column;
                     if (fields[column] == FieldType.CIRCLE) {
-                        client1.write("WIN");
-                        client2.write("LOSE");
+                        client1.write("WIN;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
+                        client2.write("LOSE;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
                     }
                     else {
-                        client1.write("LOSE");
-                        client2.write("WIN");
+                        client1.write("LOSE;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
+                        client2.write("WIN;"+x+";"+0+";"+x+";"+1+";"+x+";"+2);
                     }
                     return true;
                 }
@@ -96,12 +97,12 @@ public class Game implements Runnable {
         if (fields[0] == fields[4] && fields[0] == fields[8]) {
             if (fields[0] != FieldType.BLANK) {
                 if (fields[0] == FieldType.CIRCLE) {
-                    client1.write("WIN");
-                    client2.write("LOSE");
+                    client1.write("WIN;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
+                    client2.write("LOSE;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
                 }
                 else {
-                    client1.write("LOSE");
-                    client2.write("WIN");
+                    client1.write("LOSE;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
+                    client2.write("WIN;"+0+";"+0+";"+1+";"+1+";"+2+";"+2);
                 }
                 return true;
             }
@@ -109,12 +110,12 @@ public class Game implements Runnable {
         if (fields[6] == fields[4] && fields[6] == fields[2]) {
             if (fields[6] != FieldType.BLANK) {
                 if (fields[6] == FieldType.CIRCLE) {
-                    client1.write("WIN");
-                    client2.write("LOSE");
+                    client1.write("WIN;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
+                    client2.write("LOSE;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
                 }
                 else {
-                    client1.write("LOSE");
-                    client2.write("WIN");
+                    client1.write("LOSE;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
+                    client2.write("WIN;"+0+";"+2+";"+1+";"+1+";"+2+";"+0);
                 }
                 return true;
             }

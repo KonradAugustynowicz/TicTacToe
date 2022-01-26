@@ -1,6 +1,5 @@
-package server;
+package host;
 
-import Podjebane.FieldType;
 
 import java.io.IOException;
 import java.io.InputStream;

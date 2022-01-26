@@ -1,5 +1,8 @@
 package Podjebane;
 
+import client.field.LoseResultField;
+import client.field.WinResultField;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,7 +31,6 @@ public class Gameboard implements Runnable {
         input = socket.getInputStream();
         System.setProperty("sun.java2d.opengl", "true");
         System.out.println(type);
-
         // konstruowanie okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame = frame;
@@ -88,7 +90,7 @@ public class Gameboard implements Runnable {
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
-                        kafelki.setAt(y, x, incomingType);
+                        kafelki.setTypeAt(y, x, incomingType);
                     }
                     if (split[0].equals("move"))
                         yourTurn = true;
@@ -96,10 +98,20 @@ public class Gameboard implements Runnable {
                         yourTurn = false;
                     if (msg.equals("DRAW"))
                         showExitDialog("Draw");
-                    if (msg.equals("WIN"))
-                        showExitDialog("You won!");
-                    if (msg.equals("LOSE"))
-                        showExitDialog("You lost!");
+                    if (split[0].equals("WIN")) {
+                        for(int i=1;i<split.length;i+=2){
+                            int x = Integer.parseInt(split[i]);
+                            int y = Integer.parseInt(split[i+1]);
+                            kafelki.setAt(y,x,new WinResultField(kafelki.getAt(y,x)));
+                        }
+                    }
+                    if (split[0].equals("LOSE")) {
+                        for(int i=1;i<split.length;i+=2){
+                            int x = Integer.parseInt(split[i]);
+                            int y = Integer.parseInt(split[i+1]);
+                            kafelki.setAt(y,x,new LoseResultField(kafelki.getAt(y,x)));
+                        }
+                    }
 
                 }
             } catch (IOException e) {
