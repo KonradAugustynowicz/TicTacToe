@@ -8,6 +8,7 @@ public class History {
     private final List<Memento> mementoList = new ArrayList<>();
 
     public void addMemento(Memento memento) {
+        System.out.println(memento.getState());
         mementoList.add(memento);
     }
 

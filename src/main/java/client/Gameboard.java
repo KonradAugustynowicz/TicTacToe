@@ -2,6 +2,8 @@ package client;
 
 import client.field.LoseResultField;
 import client.field.WinResultField;
+import memento.History;
+import memento.Originator;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +20,7 @@ import javax.swing.*;
 
 public class Gameboard implements Runnable {
     static final int TILESIZE = 80;
-    final public Fields kafelki = new Fields(3, 3, TILESIZE);
+    private Fields kafelki = new Fields(3, 3, TILESIZE);
     final public StartMenu startMenu = new StartMenu();
     FieldType type;
     Socket socket;
@@ -26,6 +28,13 @@ public class Gameboard implements Runnable {
     OutputStream output;
     InputStream input;
     static boolean yourTurn = false;
+
+    Boolean isHistory = false;
+    Originator originator;
+    History history;
+
+    String msg = "";
+    int mementoIndex = 0;
 
     //Buttons
     JButton leftButton = new JButton("<");
@@ -40,6 +49,10 @@ public class Gameboard implements Runnable {
         input = socket.getInputStream();
         System.setProperty("sun.java2d.opengl", "true");
         System.out.println(type);
+
+
+        originator = new Originator();
+        history = new History();
 
         // konstruowanie okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,13 +98,22 @@ public class Gameboard implements Runnable {
                 leftButton.setVisible(false);
                 gbc.gridx = 0;
                 gbc.gridy = 3;
-                gbc.insets = new Insets(10, 0, 0, - 120);
+                gbc.insets = new Insets(10, 0, 0, -120);
                 frame.getContentPane().add(leftButton, gbc);
-
+                rightButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (mementoIndex < history.getListSize() - 1) {
+                            msg = originator.getState();
+                            mementoIndex++;
+                            originator.getStateFromMemento(history.getMemento(mementoIndex));
+                        }
+                    }
+                });
                 rightButton.setVisible(false);
                 gbc.gridx = 2;
                 gbc.gridy = 3;
-                gbc.insets = new Insets(10, - 120, 0, 0);
+                gbc.insets = new Insets(10, -120, 0, 0);
                 frame.getContentPane().add(rightButton, gbc);
 
                 frame.getContentPane().repaint();
@@ -133,18 +155,22 @@ public class Gameboard implements Runnable {
     @Override
     public void run() {
         while (true) {
-            String msg = "";
-
+            if (!isHistory)
+                msg = "";
             try {
-                if (input.available() > 0 || ! msg.isEmpty()) {
+                if (input.available() > 0 || !msg.isEmpty()) {
                     int d;
-                    while ((d = input.read()) != 38) {
-                        msg = msg + (char) d;
+                    if (!isHistory) {
+                        while ((d = input.read()) != 38) {
+                            msg = msg + (char) d;
+                        }
                     }
-
                     String[] split = msg.split(";");
                     if (split[0].equals("UPDATE")) {
-
+                        if (!isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
@@ -155,12 +181,22 @@ public class Gameboard implements Runnable {
                     if (split[0].equals("wait"))
                         yourTurn = false;
                     if (msg.equals("DRAW")) {
+                        if (!isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
                         leftButton.setVisible(true);
                         rightButton.setVisible(true);
                         historyLabel.setVisible(true);
-                        showExitDialog("Draw");
+                        if (!isHistory) {
+                            showExitDialog("Draw");
+                        }
                     }
                     if (split[0].equals("WIN")) {
+                        if (!isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
                         leftButton.setVisible(true);
                         rightButton.setVisible(true);
                         historyLabel.setVisible(true);
@@ -169,8 +205,15 @@ public class Gameboard implements Runnable {
                             int y = Integer.parseInt(split[i + 1]);
                             kafelki.setAt(y, x, new WinResultField(kafelki.getAt(y, x)));
                         }
+                        if (!isHistory) {
+                            showExitDialog("You won!");
+                        }
                     }
                     if (split[0].equals("LOSE")) {
+                        if (!isHistory) {
+                            originator.setState(msg);
+                            history.addMemento(originator.saveStateToMemento());
+                        }
                         leftButton.setVisible(true);
                         rightButton.setVisible(true);
                         historyLabel.setVisible(true);
@@ -179,8 +222,10 @@ public class Gameboard implements Runnable {
                             int y = Integer.parseInt(split[i + 1]);
                             kafelki.setAt(y, x, new LoseResultField(kafelki.getAt(y, x)));
                         }
+                        if (!isHistory) {
+                            showExitDialog("You lost :c");
+                        }
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -190,9 +235,15 @@ public class Gameboard implements Runnable {
 
     private void showExitDialog(String message) {
         int result = JOptionPane.showConfirmDialog(frame,
-                message, "Game over",
+                message + "\nDo you want to return to history?", "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.NO_OPTION)
             frame.dispose();
+        else {
+            msg = "";
+            isHistory = true;
+            originator.getStateFromMemento(history.getMemento(0));
+            kafelki.reset();
+        }
     }
 }
