@@ -85,6 +85,19 @@ public class Gameboard implements Runnable {
                 frame.getContentPane().add(kafelki, gbc);
 
                 JButton pauseButton = new JButton("Pause");
+                pauseButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            output.write(("PAUSE&").getBytes());
+                            output.flush();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+                });
                 gbc.gridx = 1;
                 gbc.gridy = 2;
                 gbc.insets = new Insets(10, 0, 0, 0);

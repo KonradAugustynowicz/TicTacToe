@@ -6,4 +6,12 @@ public class FinishedState implements GameState{
     public static GameState getState(){
         return instance;
     }
+
+    private FinishedState() {
+    }
+
+    @Override
+    public void play() {
+
+    }
 }

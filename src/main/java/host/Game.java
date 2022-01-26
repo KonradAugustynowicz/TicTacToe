@@ -28,6 +28,8 @@ public class Game implements Runnable {
         boolean gameOver = false;
         while (! gameOver) {
 
+            state.play();
+
             String msg;
             if (firstPlayerTurn) {
                 client1.write("move");

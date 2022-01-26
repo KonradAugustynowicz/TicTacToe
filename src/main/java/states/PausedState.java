@@ -6,4 +6,9 @@ public class PausedState implements GameState{
     public static GameState getState(){
         return instance;
     }
+
+    @Override
+    public void play() {
+
+    }
 }
