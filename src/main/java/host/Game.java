@@ -1,11 +1,13 @@
 package host;
 
 import client.field.FieldType;
+import host.observer.Publisher;
 import host.states.FinishedState;
 import host.states.GameState;
 import host.states.PausedState;
 import host.states.RunningState;
 
+import java.net.ServerSocket;
 import java.util.Arrays;
 
 public class Game implements Runnable {
@@ -13,7 +15,7 @@ public class Game implements Runnable {
     private final Client client1;
     private final Client client2;
 
-
+    private final Publisher publisher;
 
     public void setState(GameState state) {
         this.state = state;
@@ -23,9 +25,10 @@ public class Game implements Runnable {
     private FieldType[] fields;
     public boolean firstPlayerTurn = true;
 
-    public Game(Client client1, Client client2) {
+    public Game(Client client1, Client client2, ServerSocket serverSocket) {
         this.client1 = client1;
         this.client2 = client2;
+        this.publisher = new Publisher(serverSocket);
         fields = new FieldType[9];
         Arrays.fill(fields, FieldType.BLANK);
         state = RunningState.getState();
@@ -50,6 +53,7 @@ public class Game implements Runnable {
             }
             client1.write(msg);
             client2.write(msg);
+            publisher.NotifySubscribers(msg);
             gameOver = checkForEnd();
         }
         state = FinishedState.getState();
@@ -71,6 +75,8 @@ public class Game implements Runnable {
                         client1.write("LOSE;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
                         client2.write("WIN;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
                     }
+                    publisher.NotifySubscribers("WIN;" + 0 + ";" + y + ";" + 1 + ";" + y + ";" + 2 + ";" + y);
+
                     return true;
                 }
             }
@@ -88,6 +94,7 @@ public class Game implements Runnable {
                         client1.write("LOSE;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
                         client2.write("WIN;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
                     }
+                    publisher.NotifySubscribers("WIN;" + x + ";" + 0 + ";" + x + ";" + 1 + ";" + x + ";" + 2);
                     return true;
                 }
             }
@@ -104,6 +111,7 @@ public class Game implements Runnable {
                     client1.write("LOSE;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
                     client2.write("WIN;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
                 }
+                publisher.NotifySubscribers("WIN;" + 0 + ";" + 0 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 2);
                 return true;
             }
         }
@@ -117,12 +125,14 @@ public class Game implements Runnable {
                     client1.write("LOSE;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
                     client2.write("WIN;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
                 }
+                publisher.NotifySubscribers("WIN;" + 0 + ";" + 2 + ";" + 1 + ";" + 1 + ";" + 2 + ";" + 0);
                 return true;
             }
         }
         if (! Arrays.asList(fields).contains(FieldType.BLANK)) {
             client1.write("DRAW");
             client2.write("DRAW");
+            publisher.NotifySubscribers("DRAW");
             return true;
         }
         return false;

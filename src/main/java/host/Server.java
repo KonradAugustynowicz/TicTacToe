@@ -21,7 +21,7 @@ public class Server {
             socket = serverSocket.accept();
             Client c2 = new Client(socket,FieldType.CROSS);
             System.out.println("client 2 joined..........");
-            Game game = new Game(c1,c2);
+            Game game = new Game(c1,c2, serverSocket);
             game.run();
         }
     }

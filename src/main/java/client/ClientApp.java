@@ -12,7 +12,7 @@ import java.net.Socket;
 public class ClientApp {
     public static void main(String[] args) throws IOException {
         FlatDarculaLaf.setup();
-        Socket socket = new Socket("25.8.248.107", 5000);
+        Socket socket = new Socket("localhost", 5000);
 
         OutputStream output = socket.getOutputStream();
         InputStream input = socket.getInputStream();
@@ -29,8 +29,11 @@ public class ClientApp {
                     if (split[1].equals("CIRCLE")) {
                         new Gameboard(new JFrame(), FieldType.CIRCLE, socket).run();
                     }
-                    else {
+                    else if(split[1].equals("CROSS")) {
                         new Gameboard(new JFrame(), FieldType.CROSS, socket).run();
+                    }
+                    else {
+                        new Gameboard(new JFrame(), null, socket).run();
                     }
                     break;
                 }

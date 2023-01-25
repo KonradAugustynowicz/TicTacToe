@@ -18,7 +18,7 @@ public class Client {
             input=socket.getInputStream();
             output=socket.getOutputStream();
 
-            write("INIT;"+type);
+            write("INIT;" + type);
         } catch (IOException e) {
             e.printStackTrace();
         }
