@@ -183,6 +183,7 @@ public class Gameboard implements Runnable {
                             originator.setState(msg);
                             history.addMemento(originator.saveStateToMemento());
                         }
+                        mainLabel.setText("");
                         int x = Integer.parseInt(split[1]);
                         int y = Integer.parseInt(split[2]);
                         FieldType incomingType = split[3].equals("CIRCLE") ? FieldType.CIRCLE : FieldType.CROSS;
@@ -226,6 +227,9 @@ public class Gameboard implements Runnable {
                             int x = Integer.parseInt(split[i]);
                             int y = Integer.parseInt(split[i + 1]);
                             fields.setAt(y, x, new WinResultField(fields.getAt(y, x)));
+                        }
+                        if (type == null) {
+                            showExitDialog("Game Finished!");
                         }
                         if (! isHistory) {
                             showExitDialog("You won!");
